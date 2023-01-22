@@ -19,12 +19,14 @@ import javax.crypto.spec.SecretKeySpec;
 
 public class Pseudonym {
 
-    private static final String SALT_VALUE = "abcdefg";
+    private static final String SALT = "abcdefg";
+    public static final int ITERATION_COUNT = 65536;
+    public static final int KEY_LENGTH = 256;
+    public static final String KEY_ALGORITHM = "PBKDF2WithHmacSHA256";
 
     private final IvParameterSpec ivspec;
 
     public Pseudonym() {
-
         ivspec = new IvParameterSpec(new byte[]{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0});
     }
 
@@ -34,9 +36,9 @@ public class Pseudonym {
         try {
 
             /* Create factory for secret keys. */
-            SecretKeyFactory factory = SecretKeyFactory.getInstance("PBKDF2WithHmacSHA256");
+            SecretKeyFactory factory = SecretKeyFactory.getInstance(KEY_ALGORITHM);
             /* PBEKeySpec class implements KeySpec interface. */
-            KeySpec spec = new PBEKeySpec(secretKey.toCharArray(), SALT_VALUE.getBytes(), 65536, 256);
+            KeySpec spec = new PBEKeySpec(secretKey.toCharArray(), SALT.getBytes(), ITERATION_COUNT, KEY_LENGTH);
             SecretKey tmp = factory.generateSecret(spec);
             SecretKeySpec secretKeySpec = new SecretKeySpec(tmp.getEncoded(), "AES");
             Cipher cipher = Cipher.getInstance("AES/CBC/PKCS5Padding");
@@ -56,9 +58,9 @@ public class Pseudonym {
         try {
 
             /* Create factory for secret keys. */
-            SecretKeyFactory factory = SecretKeyFactory.getInstance("PBKDF2WithHmacSHA256");
+            SecretKeyFactory factory = SecretKeyFactory.getInstance(KEY_ALGORITHM);
             /* PBEKeySpec class implements KeySpec interface. */
-            KeySpec spec = new PBEKeySpec(secretKey.toCharArray(), SALT_VALUE.getBytes(), 65536, 256);
+            KeySpec spec = new PBEKeySpec(secretKey.toCharArray(), SALT.getBytes(), ITERATION_COUNT, KEY_LENGTH);
             SecretKey tmp = factory.generateSecret(spec);
             SecretKeySpec secretKeySpec = new SecretKeySpec(tmp.getEncoded(), "AES");
             Cipher cipher = Cipher.getInstance("AES/CBC/PKCS5PADDING");
@@ -67,9 +69,9 @@ public class Pseudonym {
             return new String(cipher.doFinal(Base64.getDecoder().decode(cipherText)));
         } catch (InvalidAlgorithmParameterException | InvalidKeyException | NoSuchAlgorithmException |
                  InvalidKeySpecException | BadPaddingException | IllegalBlockSizeException | NoSuchPaddingException e) {
-            System.out.println("Error occured during decryption: " + e);
+            throw new RuntimeException(e);
         }
-        return null;
+
     }
 
 

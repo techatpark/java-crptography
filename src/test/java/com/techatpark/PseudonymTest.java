@@ -8,15 +8,13 @@ class PseudonymTest {
 
         Pseudonym pseudonym = new Pseudonym();
 
-        String plainText = "AES Encryption";
+        String plainText = "Idly";
         String secretKey = "secretKey";
 
         String cipherText = pseudonym.encrypt(plainText, secretKey);
-        String decryptedText = pseudonym.decrypt(cipherText, secretKey);
 
-        /* Display the original message, encrypted message and decrypted message on the console. */
         System.out.println("Plain Text: " + plainText);
-        System.out.println("Cipher Text: " + cipherText);
-        System.out.println("Decrypted Text: " + decryptedText);
+        System.out.println("De-identification to Cipher Text => " + cipherText);
+        System.out.println("Identification to plain Text => " + pseudonym.decrypt(cipherText, secretKey));
     }
 }
